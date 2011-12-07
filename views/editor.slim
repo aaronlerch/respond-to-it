@@ -4,4 +4,14 @@ html
     title respondto.it
 
   body
-    = params.to_s
+    form method="POST" action=url("/with/#{params[:code]}/update")
+      == checkbox_for :get
+      == checkbox_for :post
+      p JSON
+      textarea id="json" name="json" rows="10" cols="50"
+        = config["json"]
+      p XML
+      textarea id="xml" name="xml" rows="10" cols="50"
+        = config["xml"]
+      br
+      input type="submit" value="Save"
