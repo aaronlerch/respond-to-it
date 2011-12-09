@@ -2,6 +2,7 @@ doctype html
 html
   head
     title respondto.it
+    == slim :tracking
 
   body
     form method="POST" action=url("/with/#{params[:code]}/update")
