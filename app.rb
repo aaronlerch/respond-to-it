@@ -2,6 +2,7 @@ require 'sinatra'
 require 'slim'
 require 'redis'
 require 'json'
+require 'sass'
 
 configure do
   uri = URI.parse(ENV["REDISTOGO_URL"])
@@ -55,7 +56,11 @@ get '/' do
   slim :index
 end
 
-['/with/:code.:format?', '/with/:code'].each do |path|
+get '/app.css' do
+  scss :style
+end
+
+['/:code.:format?', '/:code'].each do |path|
   get path do
     return slim(:editor) if browser?
     return 404 if not !!config["get"]
@@ -68,6 +73,13 @@ end
   end
 
   post path do
+    if browser?
+      config_hash = {"get" => !!params["get"], "post" => !!params["post"], "json" => params["json"].to_s, "xml" => params["xml"].to_s}
+      REDIS.set "#{params[:code]}:config", config_hash.to_json
+      redirect to("/#{params[:code]}")
+      return
+    end
+
     return 404 if not !!config["post"]
 
     if json?
@@ -76,10 +88,4 @@ end
       xml
     end
   end
-end
-
-post '/with/:code/update' do
-  config_hash = {"get" => !!params["get"], "post" => !!params["post"], "json" => params["json"].to_s, "xml" => params["xml"].to_s}
-  REDIS.set "#{params[:code]}:config", config_hash.to_json
-  redirect to("/with/#{params[:code]}")
 end
