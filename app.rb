@@ -3,6 +3,10 @@ require 'slim'
 require 'redis'
 require 'json'
 require 'sass'
+require 'rack-flash'
+
+enable :sessions
+use Rack::Flash, :sweep => true
 
 configure do
   uri = URI.parse(ENV["REDISTOGO_URL"])
@@ -35,7 +39,6 @@ helpers do
 
   def config
     @config ||= begin
-      puts "getting the config from REDIS"
       data = REDIS.get "#{params[:code]}:config"
       if data.nil?
         {}
@@ -48,7 +51,7 @@ helpers do
   def checkbox_for(method)
     method_name = method.to_s
     checked = "checked" if !!config[method_name]
-    "<input type=\"checkbox\" name=\"#{method_name}\" value=\"#{method_name}\" #{checked} /> #{method_name.upcase}"
+    "<label for=\"#{method_name}\"><input type=\"checkbox\" name=\"#{method_name}\" value=\"#{method_name}\" #{checked} /><span>#{method_name.upcase}</label>"
   end
 end
 
@@ -76,6 +79,7 @@ end
     if browser?
       config_hash = {"get" => !!params["get"], "post" => !!params["post"], "json" => params["json"].to_s, "xml" => params["xml"].to_s}
       REDIS.set "#{params[:code]}:config", config_hash.to_json
+      flash[:notice] = "The response was updated successfully."
       redirect to("/#{params[:code]}")
       return
     end
