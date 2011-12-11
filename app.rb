@@ -5,15 +5,26 @@ require 'json'
 require 'sass'
 require 'rack-flash'
 
-enable :sessions
-use Rack::Flash, :sweep => true
+configure :development do
+  uri = URI.parse('redis://localhost:6379')
+  REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+end
 
-configure do
+configure :production do
   uri = URI.parse(ENV["REDISTOGO_URL"])
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
 end
 
+configure do
+  enable :sessions
+  use Rack::Flash, :sweep => true
+end
+
 helpers do
+  def config_key(code)
+    "code:#{params[:code]}:config"
+  end
+
   def browser?
     # Poor man's sniffer: if the user agent accepts html first, give them the edit form.
     request.preferred_type =~ /text\/html/i && (params[:format].nil? || params[:format].empty?)
@@ -39,7 +50,7 @@ helpers do
 
   def config
     @config ||= begin
-      data = REDIS.get "#{params[:code]}:config"
+      data = REDIS.get config_key(params[:code])
       if data.nil?
         {}
       else
@@ -78,7 +89,7 @@ end
   post path do
     if browser?
       config_hash = {"get" => !!params["get"], "post" => !!params["post"], "json" => params["json"].to_s, "xml" => params["xml"].to_s}
-      REDIS.set "#{params[:code]}:config", config_hash.to_json
+      REDIS.set config_key(params[:code]), config_hash.to_json
       flash[:notice] = "The response was updated successfully."
       redirect to("/#{params[:code]}")
       return
