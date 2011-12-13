@@ -10,8 +10,9 @@ html
   body
     .container
       .page-header
-        a href=url("/")
-          h1 respondto.it
+        h1
+          a href=url("/") respondto.it
+          = request.path_info
       .row
         .span14
           - if flash[:notice]
