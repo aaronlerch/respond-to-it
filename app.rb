@@ -25,8 +25,6 @@ helpers do
 
   def browser?
     request.query_string =~ /^view$/i
-    # Poor man's sniffer: if the user agent accepts html first, give them the edit form.
-    #request.preferred_type =~ /text\/html/i && (params[:format].nil? || params[:format].empty?)
   end
 
   def json?
@@ -72,12 +70,14 @@ end
 ['/:code.:format?', '/:code'].each do |path|
   get path do
     return slim(:editor) if browser?
-    return 404 if not !!config["get"]
+    return [404, "Um, guess again?"] if not !!config["get"]
 
     if json?
       json
     elsif xml?
       xml
+    else
+      "Howdy"
     end
   end
 
@@ -96,6 +96,8 @@ end
       json
     elsif xml?
       xml
+    else
+      "Howdy"
     end
   end
 end

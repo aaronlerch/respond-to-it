@@ -1,7 +1,7 @@
 body {
   padding-top: 60px;
   background-image: url(/bg.png);
-  color: #fff;
+  color: #000;
 }
 
 table {
@@ -35,5 +35,45 @@ a.btn {
 }
 
 .hero-unit h1 {
-  color: #ffffff;
+  color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #fff;
+  text-shadow: #444 1px 1px 1px;
+}
+
+.title {
+  text-align: center;
+}
+
+.title h1 {
+  color: #fff;
+  text-shadow: #000 1px 1px 3px;
+  padding-top: 60px;
+  font-size: 400%;
+}
+
+.title p {
+  font-size: 18px;
+  font-weight: 200;
+  padding-bottom: 40px;
+  line-height: 27px;
+}
+
+footer {
+  margin-top: 150px;
+  border: none;
+}
+
+footer p {
+  text-align: center;
+}
+
+footer a {
+  color: #000;
+}
+
+footer a:hover {
+  color: #000;
 }
