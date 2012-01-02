@@ -2,7 +2,6 @@ require 'sinatra'
 require 'slim'
 require 'redis'
 require 'json'
-require 'sass'
 require 'rack-flash'
 
 configure :development do
@@ -68,10 +67,6 @@ end
 
 get '/' do
   slim :index
-end
-
-get '/app.css' do
-  scss :style
 end
 
 ['/:code.:format?', '/:code'].each do |path|

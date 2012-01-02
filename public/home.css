@@ -1,0 +1,39 @@
+body {
+  padding-top: 60px;
+  background-image: url(/bg.png);
+  color: #fff;
+}
+
+table {
+  margin-bottom: 0px;
+}
+
+table td {
+  vertical-align: middle;
+  border: none;
+  white-space: nowrap;
+}
+
+td + td {
+  width: 100%;
+}
+
+input {
+  font-size: 300%;
+  width: 375px;
+  height: auto;
+  color: black;
+}
+
+a.btn {
+  font-size: 300%;
+}
+
+.hero-unit {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.hero-unit h1 {
+  color: #ffffff;
+}
