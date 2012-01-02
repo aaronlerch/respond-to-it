@@ -2,7 +2,7 @@ require 'sinatra'
 require 'slim'
 require 'redis'
 require 'json'
-require 'rack-flash'
+require 'sinatra/flash'
 
 configure :development do
   uri = URI.parse('redis://localhost:6379')
@@ -16,7 +16,6 @@ end
 
 configure do
   enable :sessions
-  use Rack::Flash, :sweep => true
 end
 
 helpers do
@@ -25,8 +24,9 @@ helpers do
   end
 
   def browser?
+    request.query_string =~ /^view$/i
     # Poor man's sniffer: if the user agent accepts html first, give them the edit form.
-    request.preferred_type =~ /text\/html/i && (params[:format].nil? || params[:format].empty?)
+    #request.preferred_type =~ /text\/html/i && (params[:format].nil? || params[:format].empty?)
   end
 
   def json?
