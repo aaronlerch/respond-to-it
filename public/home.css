@@ -4,6 +4,10 @@ body {
   color: #000;
 }
 
+form {
+  margin: 0px;
+}
+
 table {
   margin-bottom: 0px;
 }

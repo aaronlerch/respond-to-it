@@ -23,6 +23,10 @@ helpers do
     "code:#{params[:code]}:config"
   end
 
+  def requests_key(code)
+    "code:#{params[:code]}:requests"
+  end
+
   def view?
     request.query_string =~ /^view$/i
   end
@@ -48,18 +52,8 @@ helpers do
   def config
     @config ||= begin
       data = REDIS.get config_key(params[:code])
-      if data.nil?
-        {}
-      else
-        JSON.parse(data)
-      end
+      result = JSON.parse(data) unless data.nil?
     end
-  end
-
-  def checkbox_for(method)
-    method_name = method.to_s
-    checked = "checked" if !!config[method_name]
-    "<label for=\"#{method_name}\"><input type=\"checkbox\" name=\"#{method_name}\" value=\"#{method_name}\" #{checked} /><span>#{method_name.upcase}</label>"
   end
 end
 
@@ -70,7 +64,7 @@ end
 ['/:code.:format?', '/:code'].each do |path|
   get path do
     return slim(:view) if view?
-    return [404, "Um, guess again?"] if not !!config["get"]
+    return [404, "Um, guess again?"] if config.nil?
 
     if json?
       json
@@ -83,14 +77,13 @@ end
 
   post path do
     if view?
-      config_hash = {"get" => !!params["get"], "post" => !!params["post"], "json" => params["json"].to_s, "xml" => params["xml"].to_s}
+      config_hash = {"json" => params["json"].to_s, "xml" => params["xml"].to_s}
       REDIS.set config_key(params[:code]), config_hash.to_json
       flash[:notice] = "The response was updated successfully."
-      redirect to("/#{params[:code]}")
-      return
+      return slim(:view)
     end
 
-    return 404 if not !!config["post"]
+    return 404 if config.nil?
 
     if json?
       json

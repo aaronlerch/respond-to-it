@@ -6,12 +6,16 @@ html
     link rel="stylesheet" href="/home.css"
     script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"
     javascript:
+      function goToPath() {
+        $p = escape($.trim($('#path').val()));
+        if ($p === '') { return false; }
+        document.location.href='/' + $p + '?view';
+        return false;
+      };
+
       $(document).ready(function() {
-        $('a#gotopath').click(function() {
-          $p = escape($.trim($('#path').val()));
-          if ($p === '') { return; }
-          document.location.href='/' + $p + '?view';
-        });
+        $('a#gotopath').click(goToPath);
+        $('form#go-path').submit(goToPath);
       });
     == slim :tracking
 
@@ -30,7 +34,8 @@ html
               h1
                 | respondto.it /
             td
-              input type="text" name="path" id="path"
+              form#go-path
+                input type="text" name="path" id="path"
             td
               a#gotopath.btn.primary GO
       .row

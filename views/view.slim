@@ -19,20 +19,13 @@ html
             .alert-message.success.fade.in data-alert="alert"
               a.close href="#" x
               p
-                strong Yay!
                 = " #{flash[:notice]} Check out the "
                 a href=url("/#{params[:code]}.json") JSON
                 | &nbsp;or&nbsp;
                 a href=url("/#{params[:code]}.json") XML
-          form method="POST" action=url("/#{params[:code]}")
+          form method="POST" action=url("/#{params[:code]}?view")
             fieldset
               legend Respond with...
-            .clearfix
-              label Methods
-              .input
-                == checkbox_for :get
-              .input
-                == checkbox_for :post
             .clearfix
               label for="json" JSON
               .input
