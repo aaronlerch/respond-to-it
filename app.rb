@@ -23,7 +23,7 @@ helpers do
     "code:#{params[:code]}:config"
   end
 
-  def browser?
+  def view?
     request.query_string =~ /^view$/i
   end
 
@@ -69,7 +69,7 @@ end
 
 ['/:code.:format?', '/:code'].each do |path|
   get path do
-    return slim(:editor) if browser?
+    return slim(:view) if view?
     return [404, "Um, guess again?"] if not !!config["get"]
 
     if json?
@@ -82,7 +82,7 @@ end
   end
 
   post path do
-    if browser?
+    if view?
       config_hash = {"get" => !!params["get"], "post" => !!params["post"], "json" => params["json"].to_s, "xml" => params["xml"].to_s}
       REDIS.set config_key(params[:code]), config_hash.to_json
       flash[:notice] = "The response was updated successfully."
