@@ -67,15 +67,15 @@ helpers do
   def requests
     @requests ||= begin
       data = REDIS.lrange requests_key, 0, 9
-      # todo: parse the json and return
-      puts data.inspect
+      data.map! { |req| JSON.parse(req) }
+      data.each { |req| req["time"] = Time.at(req["time"].to_i) }
     end
   end
 
   def store_request
     REDIS.multi do
-      REDIS.lpush requests_key, package_request
-      REDIS.ltrim requests_key, 0, 9 # restrict to 10 items
+      REDIS.lpush requests_key, package_request # append the request to the end
+      REDIS.ltrim requests_key, 0, 9 # restrict to 10 items (but trim the first part of the list, keeping the last 10)
     end
   end
 
@@ -92,10 +92,10 @@ helpers do
 
   def package_headers
     pretty = {}
-    allowed_headers = request.env.reject { |k,v| k =~ /^HTTP_.*/ }
+    allowed_headers = request.env.select { |k,v| k =~ /^HTTP_/ }
     allowed_headers.each do |k,v|
       header = k.dup
-      header.gsub!(/HTTP_/, '')
+      header.gsub!(/^HTTP_/, '')
       header = header.downcase.titlecase.tr(' ', '-')
       pretty[header] = v
     end
@@ -107,9 +107,8 @@ get '/' do
   slim :index
 end
 
-get '/test' do
-  result = ""
-  result
+get '/test.:code' do
+  requests.inspect.class
 end
 
 ['/:code.:format?', '/:code'].each do |path|
@@ -133,7 +132,8 @@ end
       config_hash = {"json" => params["json"].to_s, "xml" => params["xml"].to_s}
       REDIS.set config_key, config_hash.to_json
       flash[:notice] = "The response was updated successfully."
-      return slim(:view)
+      redirect to("/#{params[:code]}?view")
+      return
     end
 
     return 404 if config.nil?

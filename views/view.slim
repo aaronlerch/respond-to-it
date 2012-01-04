@@ -3,43 +3,55 @@ html
   head
     title respondto.it
     link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css"
+    link rel="stylesheet" href="/view.css"
     script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"
     script src=url("/js/bootstrap-alerts.js") type="text/javascript"
+    script src=url("/js/bootstrap-tabs.js") type="text/javascript"
     == slim :tracking
 
   body
     .container
       .page-header
         h1
-          a href=url("/") respondto.it
+          a href=url("/") #{request.host}
           = request.path_info
-      .row
-        .span14
-          - if flash[:notice]
-            .alert-message.success.fade.in data-alert="alert"
-              a.close href="#" x
-              p
-                = " #{flash[:notice]} Check out the "
-                a href=url("/#{params[:code]}.json") JSON
-                | &nbsp;or&nbsp;
-                a href=url("/#{params[:code]}.json") XML
+
+      - if flash[:notice]
+        .row
+          .alert-message.success.fade.in data-alert="alert"
+            a.close href="#" x
+            p
+              = " #{flash[:notice]} Check out the "
+              a href=url("/#{params[:code]}.json") JSON
+              | &nbsp;or&nbsp;
+              a href=url("/#{params[:code]}.xml") XML
+
+      ul.tabs data-tabs='tabs'
+        li.active
+          a href='#requests'
+            h4 Requests
+        li
+          a href='#response'
+            h4 Response
+
+      .tab-content
+        .active.tab-pane#requests
+          - requests.each do |req|
+            p #{req['ip']} : #{req['time']}
+
+        .tab-pane#response
           form method="POST" action=url("/#{params[:code]}?view")
-            fieldset
-              legend Respond with...
-            .clearfix
-              label for="json" JSON
-              .input
-                textarea.xxlarge#json name="json" rows="5"
+            .row
+              .span8
+                h1 { JSON }
+                textarea.span8#json name="json" rows="15"
                   = config["json"]
-            .clearfix
-              label for="xml" XML
-              .input
-                textarea.xxlarge#xml name="xml" rows="5"
+              .span8
+                h1 &lt; XML &gt;
+                textarea.span8#xml name="xml" rows="15"
                   = config["xml"]
             .actions
-              input.btn.primary type="submit" value="Save"
-      .row
-        .span16
-          = requests.to_s
+              input.btn.large.primary type="submit" value="Save"
+
       /a href="http://github.com/aaronlerch/respond-to-it"
         img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"
