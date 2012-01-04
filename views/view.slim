@@ -45,11 +45,11 @@ html
               .span8
                 h1 { JSON }
                 textarea.span8#json name="json" rows="15"
-                  = config["json"]
+                  = config["json"] if !config.nil?
               .span8
                 h1 &lt; XML &gt;
                 textarea.span8#xml name="xml" rows="15"
-                  = config["xml"]
+                  = config["xml"] if !config.nil?
             .actions
               input.btn.large.primary type="submit" value="Save"
 
