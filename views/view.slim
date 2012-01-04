@@ -7,6 +7,12 @@ html
     script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"
     script src=url("/js/bootstrap-alerts.js") type="text/javascript"
     script src=url("/js/bootstrap-tabs.js") type="text/javascript"
+    javascript:
+      $(function() {
+        $('a#create').click(function() {
+          $('form#response-form').submit();
+        });
+      });
     == slim :tracking
 
   body
@@ -18,40 +24,56 @@ html
 
       - if flash[:notice]
         .row
-          .alert-message.success.fade.in data-alert="alert"
-            a.close href="#" x
-            p
-              = " #{flash[:notice]} Check out the "
-              a href=url("/#{params[:code]}.json") JSON
-              | &nbsp;or&nbsp;
-              a href=url("/#{params[:code]}.xml") XML
+          .span16
+            .alert-message.success.fade.in data-alert='alert'
+              a.close href="#" x
+              p
+                = " #{flash[:notice]} Check out the "
+                a href=url("/#{params[:code]}.json") JSON
+                | &nbsp;or&nbsp;
+                a href=url("/#{params[:code]}.xml") XML
 
-      ul.tabs data-tabs='tabs'
-        li.active
-          a href='#requests'
-            h4 Requests
-        li
-          a href='#response'
-            h4 Response
+      - if known?
+        ul.tabs data-tabs='tabs'
+          li[class=active_if_known]
+            a href='#requests'
+              h4 Requests
+          li[class=active_if_unknown]
+            a href='#response'
+              h4 Response
+      - else
+        .row
+          .span16
+            .alert-message.warning data-alert='alert'
+              a.close href='#' x
+              p
+                strong You must first create this endpoint
+                | , even if you're not going to provide a response. Otherwise we will respond with a 
+                strong 404
+                | , like, forever.
+              .alert-actions
+                a#create.btn.small href='#' Create it Empty
+                span &nbsp;&nbsp;...or fill out the content below and create it.
 
       .tab-content
-        .active.tab-pane#requests
-          - requests.each do |req|
-            p #{req['ip']} : #{req['time']}
+        - if known?
+          #requests.tab-pane[class=active_if_known]
+            - requests.each do |req|
+              p #{req['ip']} : #{req['time']}
 
-        .tab-pane#response
-          form method="POST" action=url("/#{params[:code]}?view")
+        #response.tab-pane[class=active_if_unknown]
+          form#response-form method="POST" action=url("/#{params[:code]}?view")
             .row
               .span8
                 h1 { JSON }
                 textarea.span8#json name="json" rows="15"
-                  = config["json"] if !config.nil?
+                  = config["json"] if known?
               .span8
                 h1 &lt; XML &gt;
                 textarea.span8#xml name="xml" rows="15"
-                  = config["xml"] if !config.nil?
+                  = config["xml"] if known?
             .actions
-              input.btn.large.primary type="submit" value="Save"
+              input.btn.large.primary type="submit" value="#{unknown? ? 'Create' : 'Update'}"
 
       /a href="http://github.com/aaronlerch/respond-to-it"
         img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"

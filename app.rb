@@ -57,10 +57,32 @@ helpers do
     config["xml"]
   end
 
+  def known?
+    config[:known]
+  end
+
+  def unknown?
+    !known?
+  end
+
+  def active_if_unknown
+    'active' if unknown?
+  end
+
+  def active_if_known
+    'active' if known?
+  end
+
   def config
     @config ||= begin
       data = REDIS.get config_key
-      result = JSON.parse(data) unless data.nil?
+      if data.nil?
+        data = { :known => false }
+      else
+        data = JSON.parse(data)
+        data[:known] = true
+      end
+      data
     end
   end
 
@@ -114,7 +136,7 @@ end
 ['/:code.:format?', '/:code'].each do |path|
   get path do
     return slim(:view) if view?
-    return [404, "Um, guess again?"] if config.nil?
+    return [404, "Um, guess again?"] if unknown?
 
     store_request
 
@@ -129,14 +151,15 @@ end
 
   post path do
     if view?
-      config_hash = {"json" => params["json"].to_s, "xml" => params["xml"].to_s}
+      msg = "The response was #{known? ? 'updated' : 'created'} successfully."
+      config_hash = {:json => params[:json].to_s, :xml => params[:xml].to_s, :updated_at => Time.now.utc.to_i}
       REDIS.set config_key, config_hash.to_json
-      flash[:notice] = "The response was updated successfully."
+      flash[:notice] = msg
       redirect to("/#{params[:code]}?view")
       return
     end
 
-    return 404 if config.nil?
+    return 404 if unknown?
 
     store_request
 
