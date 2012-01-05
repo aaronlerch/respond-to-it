@@ -1,7 +1,6 @@
 body {
   padding-top: 60px;
   background-image: url(/bg.png);
-  color: #000;
 }
 
 form {
@@ -34,17 +33,15 @@ a.btn {
 }
 
 .hero-unit {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.1);
   padding: 20px;
 }
 
 .hero-unit h1 {
-  color: #fff;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #fff;
-  text-shadow: #444 1px 1px 1px;
+  text-shadow: #fff 1px 1px 1px;
 }
 
 .title {
@@ -52,8 +49,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .title h1 {
-  color: #fff;
-  text-shadow: #000 1px 1px 3px;
+  text-shadow: #fff 1px 1px 3px;
   padding-top: 60px;
   font-size: 400%;
 }
