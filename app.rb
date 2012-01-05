@@ -107,9 +107,13 @@ helpers do
       :time => Time.now.utc.to_f,
       :ip => request.ip,
       :method => request.request_method.upcase,
-      :path => request.fullpath,
-      :headers => package_headers
-      # todo: store the body and form post data as well
+      :path => request.path,
+      :query_string => request.query_string,
+      :headers => package_headers,
+      :content_type => request.content_type,
+      :content_length => request.content_length,
+      :params => request.params,
+      :body => body_if_no_params
     }.to_json
   end
 
@@ -124,6 +128,13 @@ helpers do
     end
     return pretty
   end
+
+  def package_params
+  end
+
+  def body_if_no_params
+    request.body if params.empty?
+  end
 end
 
 get '/' do
@@ -131,7 +142,7 @@ get '/' do
 end
 
 get '/test.:code' do
-  requests.inspect.class
+  request.params.class.to_s + "<br><br><br>" + request.params.inspect
 end
 
 ['/:code.:format?', '/:code'].each do |path|

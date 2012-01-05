@@ -59,7 +59,26 @@ html
         - if known?
           #requests.tab-pane[class=active_if_known]
             - requests.each do |req|
-              p #{req['ip']} : #{req['time']}
+              .row
+                .span3
+                  p style='text-align: right;'
+                    | #{req['time'].strftime('%m/%d/%Y %H:%M:%S.%L')}
+                    br
+                    | IP: #{req['ip']}
+                .span13
+                  h3 #{req['method']}&nbsp;#{req['path']}
+                  h4
+                    em Headers
+                  - if !req['headers'].nil?
+                    p.request-headers
+                      - req['headers'].sort.each do |name,value|
+                        strong #{name}:&nbsp;
+                        | #{value}
+                        br
+                  h4
+                    em Body
+                  p.request-body
+                    Body goes here
 
         #response.tab-pane[class=active_if_unknown]
           form#response-form method="POST" action=url("/#{params[:code]}?view")
@@ -74,6 +93,3 @@ html
                   = config["xml"] if known?
             .actions
               input.btn.large.primary type="submit" value="#{unknown? ? 'Create' : 'Update'}"
-
-      /a href="http://github.com/aaronlerch/respond-to-it"
-        img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"
