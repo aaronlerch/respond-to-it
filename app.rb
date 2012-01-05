@@ -98,6 +98,7 @@ helpers do
     REDIS.multi do
       REDIS.lpush requests_key, package_request # append the request to the end
       REDIS.ltrim requests_key, 0, 9 # restrict to 10 items (but trim the first part of the list, keeping the last 10)
+      REDIS.expire requests_key, 172800 # delete all requests after 2 days: 2 * 24 * 60 * 60
     end
   end
 
