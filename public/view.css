@@ -1,3 +1,7 @@
+body {
+  padding-top: 20px;
+}
+
 .page-header {
   border: none;
 }
@@ -9,4 +13,12 @@
 p.metadata {
   text-align: right;
   color: #666;
+}
+
+.actions {
+  padding-left: 30px;
+}
+
+input[type="submit"] {
+  width: auto;
 }

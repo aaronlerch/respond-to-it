@@ -9,8 +9,11 @@ html
     script src=url("/js/bootstrap-tabs.js") type="text/javascript"
     javascript:
       $(function() {
-        $('a#create').click(function() {
-          $('form#response-form').submit();
+        $('#create').click(function() {
+          $('#response-form').submit();
+        });
+        $('#destroy').click(function() {
+          $('#response-form').attr('action', '#{{url("/#{params[:code]}?destroy")}}').submit();
         });
       });
     == slim :tracking
@@ -19,7 +22,7 @@ html
     .container
       .page-header
         h1
-          a href=url("/") #{request.host}
+          a href=url("/") = url("/").chomp("/")
           = request.path_info
 
       - if flash[:notice]
@@ -27,11 +30,7 @@ html
           .span16
             .alert-message.success.fade.in data-alert='alert'
               a.close href="#" x
-              p
-                = " #{flash[:notice]} Check out the "
-                a href=url("/#{params[:code]}.json") JSON
-                | &nbsp;or&nbsp;
-                a href=url("/#{params[:code]}.xml") XML
+              p == flash[:notice]
 
       - if known?
         ul.tabs data-tabs='tabs'
@@ -73,7 +72,7 @@ html
                   h3 #{req['method']}&nbsp;#{req['path']}
                   h4
                     em Headers
-                  - if !req['headers'].nil?
+                  - if !req['headers'].nil? and !req['headers'].empty?
                     p.request-headers
                       - req['headers'].sort.each do |name,value|
                         strong #{name}:&nbsp;
@@ -83,11 +82,10 @@ html
                     h4
                       em Parameters
                     p
-                      - if !req['params'].nil?
-                        - req['params'].each do |name,value|
-                          strong #{name}:&nbsp;
-                          | #{value}
-                          br
+                      - req['params'].each do |name,value|
+                        strong #{name}:&nbsp;
+                        | #{value}
+                        br
                   - elsif !req['body'].nil?
                     h4
                       em Body
@@ -107,3 +105,5 @@ html
                   = config["xml"] if known?
             .actions
               input.btn.large.primary type="submit" value="#{unknown? ? 'Create' : 'Update'}"
+              - if known?
+                a#destroy.btn.large.danger.pull-right href='#' Destroy

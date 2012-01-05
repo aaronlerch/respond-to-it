@@ -39,6 +39,10 @@ helpers do
     request.query_string =~ /^view$/i
   end
 
+  def destroy?
+    request.query_string =~ /^destroy$/i
+  end
+
   def json?
     request.accept.first == "application/json" || params[:format] =~ /json/i
   end
@@ -163,9 +167,20 @@ end
   post path do
     if view?
       msg = "The response was #{known? ? 'updated' : 'created'} successfully."
+      if !params[:json].to_s.empty? or !params[:xml].to_s.empty?
+        msg << " Check out the <a href='#{url("/#{params[:code]}.json")}'>JSON</a> or <a href='#{url("/#{params[:code]}.xml")}'>XML</a>"
+      end
       config_hash = {:json => params[:json].to_s, :xml => params[:xml].to_s, :updated_at => Time.now.utc.to_i}
       REDIS.set config_key, config_hash.to_json
       flash[:notice] = msg
+      redirect to("/#{params[:code]}?view")
+      return
+    elsif destroy?
+      REDIS.multi do
+        REDIS.del config_key
+        REDIS.del requests_key
+      end
+      flash[:notice] = "The endpoint was destroyed."
       redirect to("/#{params[:code]}?view")
       return
     end
