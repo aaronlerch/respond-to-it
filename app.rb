@@ -90,7 +90,7 @@ helpers do
     @requests ||= begin
       data = REDIS.lrange requests_key, 0, 9
       data.map! { |req| JSON.parse(req) }
-      data.each { |req| req["time"] = Time.at(req["time"].to_i) }
+      data.each { |req| req["time"] = Time.at(req["time"].to_f).utc }
     end
   end
 
@@ -104,7 +104,7 @@ helpers do
 
   def package_request
     {
-      :time => Time.now.utc.to_i,
+      :time => Time.now.utc.to_f,
       :ip => request.ip,
       :method => request.request_method.upcase,
       :path => request.fullpath,
