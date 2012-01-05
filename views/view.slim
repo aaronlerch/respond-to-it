@@ -58,14 +58,18 @@ html
       .tab-content
         - if known?
           #requests.tab-pane[class=active_if_known]
+            .alert-message.warning
+              p
+                strong
+                  | Requests are only stored for 2 days and then deleted.
             - requests.each do |req|
               .row
-                .span3
-                  p style='text-align: right;'
-                    | #{req['time'].strftime('%m/%d/%Y %H:%M:%S.%L')}
+                .span2
+                  p.metadata
+                    | #{req['time'].strftime('%m/%d/%Y %H:%M:%S.%L UTC')}
                     br
-                    | IP: #{req['ip']}
-                .span13
+                    | #{req['ip']}
+                .span14.request
                   h3 #{req['method']}&nbsp;#{req['path']}
                   h4
                     em Headers
@@ -75,10 +79,20 @@ html
                         strong #{name}:&nbsp;
                         | #{value}
                         br
-                  h4
-                    em Body
-                  p.request-body
-                    Body goes here
+                  - if !req['params'].nil? and !req['params'].empty?
+                    h4
+                      em Parameters
+                    p
+                      - if !req['params'].nil?
+                        - req['params'].each do |name,value|
+                          strong #{name}:&nbsp;
+                          | #{value}
+                          br
+                  - elsif !req['body'].nil?
+                    h4
+                      em Body
+                    p
+                      | #{req['body']}
 
         #response.tab-pane[class=active_if_unknown]
           form#response-form method="POST" action=url("/#{params[:code]}?view")

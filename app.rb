@@ -108,7 +108,6 @@ helpers do
       :ip => request.ip,
       :method => request.request_method.upcase,
       :path => request.path,
-      :query_string => request.query_string,
       :headers => package_headers,
       :content_type => request.content_type,
       :content_length => request.content_length,

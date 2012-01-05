@@ -1,3 +1,12 @@
 .page-header {
   border: none;
 }
+
+.request {
+  border-bottom: 1px solid #DDD;
+}
+
+p.metadata {
+  text-align: right;
+  color: #666;
+}
