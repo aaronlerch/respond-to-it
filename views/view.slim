@@ -7,10 +7,14 @@ html
     script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"
     script src=url("/js/bootstrap-alerts.js") type="text/javascript"
     script src=url("/js/bootstrap-tabs.js") type="text/javascript"
+    script src=url("/js/bootstrap-modal.js") type="text/javascript"
     javascript:
       $(function() {
         $('#create').click(function() {
           $('#response-form').submit();
+        });
+        $('#cancel-destroy').click(function() {
+          $('#prompt-for-destroy').modal('hide');
         });
         $('#destroy').click(function() {
           $('#response-form').attr('action', '#{{url("/#{params[:code]}?destroy")}}').submit();
@@ -31,6 +35,13 @@ html
             .alert-message.success.fade.in data-alert='alert'
               a.close href="#" x
               p == flash[:notice]
+
+      - if flash[:warning]
+        .row
+          .span16
+            .alert-message.error.fade.in data-alert='alert'
+              a.close href="#" x
+              p == flash[:warning]
 
       - if known?
         ul.tabs data-tabs='tabs'
@@ -106,4 +117,14 @@ html
             .actions
               input.btn.large.primary type="submit" value="#{unknown? ? 'Create' : 'Update'}"
               - if known?
-                a#destroy.btn.large.danger.pull-right href='#' Destroy
+                a#destroy-prompt.btn.large.danger.pull-right data-controls-modal='prompt-for-destroy' data-backdrop='true' data-keyboard='true' href='#' Destroy
+
+        #prompt-for-destroy.modal.hide.fade
+          .modal-header
+            a.close href='#' &times;
+            h3 Destroy Endpoint?
+          .modal-body
+            p Destroying the endpoint will purge the response JSON and XML, as well as all stored requests.
+          .modal-footer
+            a#destroy.btn.danger href='#' Destroy
+            a#cancel-destroy.btn.secondary href='#' Cancel

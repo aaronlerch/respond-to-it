@@ -180,7 +180,7 @@ end
         REDIS.del config_key
         REDIS.del requests_key
       end
-      flash[:notice] = "The endpoint was destroyed."
+      flash[:warning] = "The endpoint was destroyed."
       redirect to("/#{params[:code]}?view")
       return
     end
