@@ -122,7 +122,13 @@ helpers do
 
   def package_headers
     pretty = {}
+    # Select out all HTTP_* headers
     allowed_headers = request.env.select { |k,v| k =~ /^HTTP_/ }
+    # Remove heroku headers
+    allowed_headers.delete_if { |k,v| k =~ /heroku/i }
+    # Add back CONTENT_LENGTH and CONTENT_TYPE
+    allowed_headers['CONTENT_LENGTH'] = request.content_length
+    allowed_headers['CONTENT_TYPE'] = request.content_type
     allowed_headers.each do |k,v|
       header = k.dup
       header.gsub!(/^HTTP_/, '')
