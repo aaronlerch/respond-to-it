@@ -7,7 +7,7 @@ body {
 }
 
 .request {
-  border-bottom: 1px solid #DDD;
+  border-bottom: 1px solid #ddd;
 }
 
 p.metadata {
@@ -21,4 +21,8 @@ p.metadata {
 
 input[type="submit"] {
   width: auto;
+}
+
+.CodeMirror {
+  border: 1px solid #ddd;
 }
