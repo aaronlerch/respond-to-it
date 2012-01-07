@@ -127,8 +127,8 @@ helpers do
     # Remove heroku headers
     allowed_headers.delete_if { |k,v| k =~ /heroku/i }
     # Add back CONTENT_LENGTH and CONTENT_TYPE
-    allowed_headers['CONTENT_LENGTH'] = request.content_length
-    allowed_headers['CONTENT_TYPE'] = request.content_type
+    allowed_headers['CONTENT_LENGTH'] = request.content_length unless request.content_length.nil?
+    allowed_headers['CONTENT_TYPE'] = request.content_type unless request.content_type.nil?
     allowed_headers.each do |k,v|
       header = k.dup
       header.gsub!(/^HTTP_/, '')
