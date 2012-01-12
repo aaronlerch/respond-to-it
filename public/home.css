@@ -37,9 +37,6 @@ a.btn {
   padding: 20px;
 }
 
-.hero-unit h1 {
-}
-
 h1, h2, h3, h4, h5, h6 {
   text-shadow: #fff 1px 1px 1px;
 }
@@ -61,8 +58,42 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 27px;
 }
 
+div#explain {
+  margin-top: 60px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  text-shadow: none;
+}
+
+div#explain .container {
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
+div#explain .title h1 {
+  padding-bottom: 50px;
+}
+
+div#explain h1 {
+  text-shadow: none;
+  color: white;
+}
+
+div#explain p.heading {
+  font-size: 200%;
+  line-height: 30px;
+}
+
+.steps .row {
+  padding-top: 20px;
+}
+
+.right {
+  text-align: right;
+}
+
 footer {
-  margin-top: 150px;
+  margin-top: 30px;
   border: none;
 }
 

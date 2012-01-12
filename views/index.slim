@@ -51,6 +51,49 @@ html
         .span-one-third
           h2 Analyze and Debug
           p View and debug the last several requests made to your URL. See headers and parameters/body information.
+
+    #explain
+      .container
+        .row
+          .span16.title
+            h1 what is respondto.it?
+        .row
+          .span16
+            p.heading
+              | some services expose 
+              a href="https://www.google.com/search?q=web+hook" web hooks
+            br
+            img src=url("/services-eg.png")
+        .steps
+          .row
+            .offset7
+              p.heading you know, where you give them a URL to hit
+          .row
+            .span16.right
+              img src=url("/services-config-eg.png")
+          .row
+            .span9
+              p.heading sometimes you want to inspect the POST before you point the hook to your app 
+          .row
+            .offset7
+              p.heading or you want to test out what happens if you respond with [xyz]
+          .row
+            .span8
+              p.heading but making a website just to test a response is lots of boring work
+          .row
+            .span16.title
+              h1 that's where we come in
+          .row
+            .offset9
+              p.heading create a new endpoint
+          .row
+            .span16.right
+              img src=url("/respondtoit-home-eg.png")
+          .row
+            .span9
+              p.heading (optionally) configure some canned JSON or XML to be returned
+
+    .container
       footer
         p
           | © Aaron Lerch 2012 
