@@ -12,6 +12,13 @@ class String
   end
 end
 
+EXCLUDED_HEADERS = [
+  'HTTP_X_FORWARDED_FOR',
+  'HTTP_X_REAL_IP',
+  'HTTP_X_REQUEST_START',
+  'HTTP_X_VARNISH'
+]
+
 configure :development do
   uri = URI.parse('redis://localhost:6379')
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
@@ -116,7 +123,7 @@ helpers do
       :content_type => request.content_type,
       :content_length => request.content_length,
       :params => request.params,
-      :body => body_if_no_params
+      :body => package_body
     }.to_json
   end
 
@@ -125,7 +132,7 @@ helpers do
     # Select out all HTTP_* headers
     allowed_headers = request.env.select { |k,v| k =~ /^HTTP_/ }
     # Remove heroku headers
-    allowed_headers.delete_if { |k,v| k =~ /heroku/i }
+    allowed_headers.delete_if { |k,v| k =~ /heroku/i || EXCLUDED_HEADERS.include?(k) }
     # Add back CONTENT_LENGTH and CONTENT_TYPE
     allowed_headers['CONTENT_LENGTH'] = request.content_length unless request.content_length.nil?
     allowed_headers['CONTENT_TYPE'] = request.content_type unless request.content_type.nil?
@@ -138,11 +145,8 @@ helpers do
     return pretty
   end
 
-  def package_params
-  end
-
-  def body_if_no_params
-    request.body if params.empty?
+  def package_body
+    request.body.read if request.request_method == 'POST' && !request.form_data?
   end
 end
 
