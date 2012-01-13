@@ -22,11 +22,13 @@ EXCLUDED_HEADERS = [
 configure :development do
   uri = URI.parse('redis://localhost:6379')
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  disable :protection
 end
 
 configure :production do
   uri = URI.parse(ENV["REDISTOGO_URL"])
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  disable :protection
 end
 
 configure do
