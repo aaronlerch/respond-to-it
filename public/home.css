@@ -84,6 +84,11 @@ div#explain p.heading {
   line-height: 30px;
 }
 
+div#explain a {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .steps .row {
   padding-top: 20px;
 }
@@ -94,6 +99,7 @@ div#explain p.heading {
 
 footer {
   margin-top: 30px;
+  padding-bottom: 10px;
   border: none;
 }
 
