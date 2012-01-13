@@ -16,10 +16,18 @@ html
       $(document).ready(function() {
         $('a#gotopath').click(goToPath);
         $('form#go-path').submit(goToPath);
+        $('a#goto-top').click(function() {
+          $('body').animate({scrollTop: 0}, {
+            duration: 1000,
+            complete: function() { $('#path').focus(); }
+          });
+          return false;
+        });
       });
     == slim :tracking
 
   body
+    a#top
     .container
       .row
         .title.span16
@@ -107,6 +115,11 @@ html
           .row
             .span16
               img src=url("/destroy-endpoint-eg.png")
+          .row
+            .span16.title
+              h1
+                | okay, got it? 
+                a#goto-top href='#top' get started!
 
       footer
         p
