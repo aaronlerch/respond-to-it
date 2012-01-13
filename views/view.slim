@@ -154,6 +154,7 @@ html
               input.btn.large.primary type="submit" value="#{unknown? ? 'Create' : 'Update'}"
               - if known?
                 a#destroy-prompt.btn.large.danger.pull-right data-controls-modal='prompt-for-destroy' data-backdrop='true' data-keyboard='true' href='#' Destroy
+                span#destroy-note.pull-right be tidy! clean up after yourself
 
         #prompt-for-destroy.modal.hide.fade
           .modal-header

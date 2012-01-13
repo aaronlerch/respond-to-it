@@ -65,14 +65,15 @@ html
         .row
           .span16.title
             h1 what is respondto.it?
-        .row
-          .span16
-            p.heading
-              | some services expose 
-              a href="https://www.google.com/search?q=web+hook" web hooks
-            br
-            img src=url("/services-eg.png")
         .steps
+          .row
+            .span16
+              p.heading
+                | some services expose 
+                a href="https://www.google.com/search?q=web+hook" web hooks
+          .row
+            .span16
+              img src=url("/services-eg.png")
           .row
             .offset7
               p.heading you know, where you give them a URL to hit
@@ -81,7 +82,7 @@ html
               img src=url("/services-config-eg.png")
           .row
             .span9
-              p.heading sometimes you want to inspect the POST before you point the hook to your app 
+              p.heading sometimes you want to inspect the POST before you point the hook to your app
           .row
             .offset7
               p.heading or you want to test out what happens if you respond with [xyz]
@@ -109,12 +110,6 @@ html
           .row
             .span16.right
               img src=url("/github-config-eg.png")
-          .row
-            .span9
-              p.heading ... don't forget to delete it when you're done!
-          .row
-            .span16
-              img src=url("/destroy-endpoint-eg.png")
           .row
             .span16.title
               h1
