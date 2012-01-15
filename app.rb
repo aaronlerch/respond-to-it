@@ -166,6 +166,7 @@ end
     return [404, "Um, guess again?"] if unknown?
 
     store_request
+    request.session_options[:skip] = true
 
     if json?
       json
@@ -200,6 +201,7 @@ end
     return 404 if unknown?
 
     store_request
+    request.session_options[:skip] = true
 
     if json?
       json

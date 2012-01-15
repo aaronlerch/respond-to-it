@@ -93,6 +93,28 @@ div#explain a {
   padding-top: 20px;
 }
 
+div#solve {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+div#solve .container {
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
+div#solve p.heading {
+  font-size: 200%;
+  line-height: 30px;
+}
+
+div#solve .title h1 {
+  padding-bottom: 50px;
+}
+
+#get-started .container {
+  padding-bottom: 150px;
+}
+
 .right {
   text-align: right;
 }
