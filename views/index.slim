@@ -88,8 +88,10 @@ html
             .offset7
               p.heading or you want to test out what happens if you respond with {something},
           .row
-            .span8
-              p.heading but making a website just to test a response is lots of boring work.
+            .span9
+              p.heading
+                | but making a website just to test a response is work you 
+                em shouldn't have to do.
     #solve
       .container
         .row
@@ -97,30 +99,33 @@ html
             h1 That's where we come in.
         .steps
           .row
-            .offset10
+            .span16
               p.heading Create a new endpoint,
           .row
-            .span16.right
+            .span16
               img src=url("/respondtoit-home-eg.png")
           .row
-            .span9
+            .offset7.span9
               p.heading (optionally) configure some canned JSON or XML to be returned,
           .row
-            .span16
+            .span16.right
               img src=url("/json-xml-eg.png")
           .row
-            .offset7
-              p.heading and then just point your service to us and inspect the requests.
+            .span7
+              p.heading and then point your service to us and inspect the requests.
           .row
-            .span16.right
+            .span16
               img src=url("/github-config-eg.png")
     #get-started
       .container
         .row
           .span16.title
             h1
-              | okay, got it? 
-              a#goto-top href='#top' get started!
+              | Okay, got it? 
+              a#goto-top href='#top' Let's get started!
+              br
+              br
+              span.rotated style='display: inline-block;' &#x27B2;
 
       footer
         p
