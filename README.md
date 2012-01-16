@@ -21,3 +21,8 @@ If the limitations of http://respondto.it/ don't match your needs, you can easil
     git push heroku master
 
 Then tweak to your heart's content.
+
+## Thanks
+
+Thanks to [Andrew Dunkman](http://twitter.com/adunkman) for some UX help at
+[Codemash](http://codemash.org/)
