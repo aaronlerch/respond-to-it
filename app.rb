@@ -36,12 +36,16 @@ configure do
 end
 
 helpers do
+  def code
+    params[:splat][0]
+  end
+
   def config_key
-    "code:#{params[:code]}:config"
+    "code:#{code}:config"
   end
 
   def requests_key
-    "code:#{params[:code]}:requests"
+    "code:#{code}:requests"
   end
 
   def view?
@@ -156,11 +160,7 @@ get '/' do
   slim :index
 end
 
-get '/test.:code' do
-  request.params.class.to_s + "<br><br><br>" + request.params.inspect
-end
-
-['/:code.:format?', '/:code'].each do |path|
+['/*.:format?', '/*'].each do |path|
   get path do
     return slim(:view) if view?
     return [404, "Um, guess again?"] if unknown?
@@ -181,12 +181,12 @@ end
     if view?
       msg = "The response was #{known? ? 'updated' : 'created'} successfully."
       if !params[:json].to_s.empty? or !params[:xml].to_s.empty?
-        msg << " Check out the <a href='#{url("/#{params[:code]}.json")}'>JSON</a> or <a href='#{url("/#{params[:code]}.xml")}'>XML</a>"
+        msg << " Check out the <a href='#{url("/#{code}.json")}'>JSON</a> or <a href='#{url("/#{code}.xml")}'>XML</a>"
       end
       config_hash = {:json => params[:json].to_s, :xml => params[:xml].to_s, :updated_at => Time.now.utc.to_i}
       REDIS.set config_key, config_hash.to_json
       flash[:notice] = msg
-      redirect to("/#{params[:code]}?view")
+      redirect to("/#{code}?view")
       return
     elsif destroy?
       REDIS.multi do
@@ -194,7 +194,7 @@ end
         REDIS.del requests_key
       end
       flash[:warning] = "The endpoint was destroyed."
-      redirect to("/#{params[:code]}?view")
+      redirect to("/#{code}?view")
       return
     end
 

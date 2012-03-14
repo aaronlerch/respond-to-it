@@ -39,7 +39,7 @@ html
         });
 
         $('#destroy').click(function() {
-          $('#response-form').attr('action', '#{{url("/#{params[:code]}?destroy")}}').submit();
+          $('#response-form').attr('action', '#{{url("/#{code}?destroy")}}').submit();
         });
       });
     - if known?
@@ -140,7 +140,7 @@ html
                       | #{req['body']}
 
         #response.tab-pane[class=active_if_unknown]
-          form#response-form method="POST" action=url("/#{params[:code]}?view")
+          form#response-form method="POST" action=url("/#{code}?view")
             .row
               .span8
                 h1 { JSON }
