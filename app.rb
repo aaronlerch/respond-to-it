@@ -152,7 +152,7 @@ helpers do
   end
 
   def package_body
-    request.body.read if request.request_method == 'POST' && !request.form_data?
+    request.body.read if ((request.request_method == 'POST' || request.request_method == 'PUT') && !request.form_data?)
   end
 end
 
@@ -211,4 +211,20 @@ end
       "Howdy"
     end
   end
+
+  put path do
+    return 404 if unknown?
+
+    store_request
+    request.session_options[:skip] = true
+
+    if json?
+      json
+    elsif xml?
+      xml
+    else
+      "Howdy"
+    end
+  end
+
 end
