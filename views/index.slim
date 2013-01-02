@@ -2,7 +2,8 @@ doctype html
 html
   head
     title respondto.it: debug and stub webhooks like a pro.
-    link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet"
+    link href=url("/css/bootstrap.no-icons.min.css") rel="stylesheet"
+    link href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet"
     link rel="stylesheet" href=url("/home.css")
     script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"
     javascript:
@@ -30,102 +31,103 @@ html
     a#top
     .container
       .row
-        .title.span16
+        .title.span12
           h1 Debug web hooks like a pro.
       .row
-        .title.span10.offset3
+        .title.span8.offset2
           p Create an endpoint to collect and respond to web hooks. View the last several requests, and configure canned responses in both JSON and XML.
       .hero-unit
         table
           tr
             td
               h1
-                | respondto.it /
+                | respondto.it / 
             td
               form#go-path
                 input type="text" name="path" id="path"
             td
-              a#gotopath.btn.primary GO
+              a#gotopath.btn.btn-primary.btn-large GO
       .row
-        .span-one-third
-          h2 Vanity URLs
+        .span4
+          h3 Vanity URLs
           p
             span style='text-decoration: underline;' http://respondto.it/my-special-endpoint
             br
             | You choose your own URL, nothing auto-generated here.
-        .span-one-third
-          h2 Custom Responses
+        .span4
+          h3 Custom Responses
           p Configure JSON or XML responses for requests that specify an Accept header with application/json or application/xml. Useful for stubbing out a web hook that participates in a workflow.
-        .span-one-third
-          h2 Analyze and Debug
+        .span4
+          h3 Analyze and Debug
           p View and debug the last several requests made to your URL. See headers and parameters/body information.
 
     #explain
       .container
         .row
-          .span16.title
+          .span12.title
             h1 What is respondto.it?
         .steps
           .row
-            .span16
+            .span12
               p.heading
                 | Some services expose 
                 a href="https://www.google.com/search?q=web+hook" web hooks
                 | .
           .row
-            .span16
+            .span12
               img src=url("/services-eg.png")
           .row
-            .offset7
+            .offset4
               p.heading You know, where you give them a URL to hit.
           .row
-            .span16.right
+            .span12.right
               img src=url("/services-config-eg.png")
           .row
-            .span9
+            .span7
               p.heading Sometimes you want to inspect the POST before you point the hook to your app,
           .row
-            .offset7
+            .offset4
               p.heading or you want to test out what happens if you respond with {something},
           .row
-            .span9
+            .span8
               p.heading
                 | but making a website just to test a response is work you 
                 em shouldn't have to do.
     #solve
       .container
         .row
-          .span16.title
+          .span12.title
             h1 That's where we come in.
         .steps
           .row
-            .span16
+            .span12
               p.heading Create a new endpoint,
           .row
-            .span16
+            .span12
               img src=url("/respondtoit-home-eg.png")
           .row
-            .offset7.span9
+            .offset5.span7
               p.heading (optionally) configure some canned JSON or XML to be returned,
           .row
-            .span16.right
+            .span12.right
               img src=url("/json-xml-eg.png")
           .row
-            .span7
+            .span5
               p.heading and then point your service to us and inspect the requests.
           .row
-            .span16
+            .span12
               img src=url("/github-config-eg.png")
     #get-started
       .container
         .row
-          .span16.title
+          .span12.title
             h1
               | Okay, got it? 
               a#goto-top href='#top' Let's get started!
               br
               br
-              span.rotated style='display: inline-block;' &#x27B2;
+              /span.rotated style='display: inline-block;' &#x27B2;
+              i.icon-chevron-up
 
       footer
         p

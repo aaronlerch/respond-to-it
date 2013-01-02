@@ -2,7 +2,8 @@ doctype html
 html
   head
     title respondto.it: debug and stub webhooks like a pro.
-    link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet"
+    link href=url("/css/bootstrap.no-icons.min.css") rel="stylesheet"
+    link href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet"
     link rel="stylesheet" href=url("/view.css")
     link rel="stylesheet" href=url("/js/codemirror/codemirror.css")
     script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"
@@ -43,7 +44,7 @@ html
     - if known?
       javascript:
         $(function() {
-          $('.tabs').bind('change', function(e) {
+          $('a[data-toggle="tab"]').on('shown', function(e) {
             if (e.target.hash == "#response") {
               createEditors();
             }
@@ -59,53 +60,52 @@ html
   body
     .container
       .page-header
-        h1
+        h2
           a href=url("/") = url("/").chomp("/")
           = request.path_info
 
       - if flash[:notice]
         .row
-          .span16
-            .alert-message.success.fade.in data-alert='alert'
-              a.close href="#" x
-              p == flash[:notice]
+          .span12
+            .alert.alert-success.fade.in
+              a.close data-dismiss="alert" href="#" x
+              == flash[:notice]
 
       - if flash[:warning]
         .row
-          .span16
-            .alert-message.error.fade.in data-alert='alert'
-              a.close href="#" x
-              p == flash[:warning]
+          .span12
+            .alert.alert-error.fade.in
+              a.close data-dismiss="alert" href="#" x
+              == flash[:warning]
 
       - if known?
-        ul.tabs data-tabs='tabs'
+        ul.nav.nav-tabs
           li[class=active_if_known]
-            a href='#requests'
+            a data-toggle="tab" href='#requests'
               h4 Requests
           li[class=active_if_unknown]
-            a href='#response'
+            a data-toggle="tab" href='#response'
               h4 Response
       - else
         .row
-          .span16
-            .alert-message.warning data-alert='alert'
-              a.close href='#' x
+          .span12
+            .alert.alert-block
+              a.close data-dismiss="alert" href='#' x
               p
                 strong You must first create this endpoint
                 | , even if you're not going to provide a response. Otherwise we will respond with a 
                 strong 404
                 | , like, forever.
-              .alert-actions
-                a#create.btn.small href='#' Create it Empty
+              p
+                a#create.btn.btn-small href='#' Create it Empty
                 span &nbsp;&nbsp;...or fill out the content below and create it.
 
       .tab-content
         - if known?
           #requests.tab-pane[class=active_if_known]
-            .alert-message.warning
-              p
-                strong
-                  | Requests are only stored for 2 days and then deleted.
+            .alert
+              strong
+                | Requests are only stored for 2 days and then deleted.
             - requests.each do |req|
               .row
                 .span2
@@ -113,7 +113,7 @@ html
                     | #{req['time'].strftime('%m/%d/%Y %H:%M:%S.%L UTC')}
                     br
                     | #{req['ip']}
-                .span14.request
+                .span10.request
                   h3 #{req['method']}&nbsp;#{req['path']}
                   h4
                     em Headers
@@ -140,26 +140,26 @@ html
         #response.tab-pane[class=active_if_unknown]
           form#response-form method="POST" action=url("/#{code}?view")
             .row
-              .span8
-                h1 { JSON }
+              .span6
+                h2 { JSON }
                 textarea.span8#json name="json" rows="15"
                   = config["json"] if known?
-              .span8
-                h1 &lt; XML &gt;
+              .span6
+                h2 &lt; XML &gt;
                 textarea.span8#xml name="xml" rows="15"
                   = config["xml"] if known?
-            .actions
-              input.btn.large.primary type="submit" value="#{unknown? ? 'Create' : 'Update'}"
+            .form-actions
+              input.btn.btn-large.btn-primary type="submit" value="#{unknown? ? 'Create' : 'Update'}"
               - if known?
-                a#destroy-prompt.btn.large.danger.pull-right data-controls-modal='prompt-for-destroy' data-backdrop='true' data-keyboard='true' href='#' Destroy
+                a#destroy-prompt.btn.btn-large.btn-danger.pull-right role="button" data-toggle="modal" href='#prompt-for-destroy' Destroy
                 span#destroy-note.pull-right be tidy! clean up after yourself
 
-        #prompt-for-destroy.modal.hide.fade
+        #prompt-for-destroy.modal.hide.fade aria-labelledby="destroy-modal-label" aria-hidden="true"
           .modal-header
-            a.close href='#' &times;
-            h3 Destroy Endpoint?
+            button.close type="button" data-dismiss="modal" aria-hidden="true" x
+            h3#destroy-modal-label Destroy Endpoint?
           .modal-body
             p Destroying the endpoint will purge the response JSON and XML, as well as all stored requests.
           .modal-footer
-            a#destroy.btn.danger href='#' Destroy
-            a#cancel-destroy.btn.secondary href='#' Cancel
+            a#destroy.btn.btn-danger href='#' Destroy
+            a#cancel-destroy.btn href='#' Cancel

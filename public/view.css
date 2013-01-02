@@ -4,6 +4,7 @@ body {
 
 .page-header {
   border: none;
+  margin: 0;
 }
 
 .request {
@@ -15,7 +16,7 @@ p.metadata {
   color: #666;
 }
 
-.actions {
+.form-actions {
   padding-left: 30px;
 }
 
@@ -23,7 +24,7 @@ input[type="submit"] {
   width: auto;
 }
 
-.actions span#destroy-note {
+.form-actions span#destroy-note {
   margin-top: 9px;
   font-size: 20px;
   margin-right: 20px;

@@ -11,25 +11,43 @@ table {
   margin-bottom: 0px;
 }
 
+table tbody {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 100%;
+  line-height: 1;
+  font-family: inherit;
+}
+
 table td {
   vertical-align: middle;
   border: none;
   white-space: nowrap;
+  text-align: center;
 }
 
 td + td {
   width: 100%;
 }
 
-input {
-  font-size: 300%;
+table h1 {
+  margin: 0;
+}
+
+#path {
+  font-size: 40px;
   width: 375px;
   height: auto;
   color: black;
+  margin: 0;
 }
 
-a.btn {
-  font-size: 300%;
+#gotopath {
+  padding: 20px;
+  font-size: 40px;
 }
 
 .hero-unit {
