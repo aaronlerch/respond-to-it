@@ -3,6 +3,8 @@ require 'slim'
 require 'redis'
 require 'json'
 require 'sinatra/flash'
+require 'securerandom'
+require 'rest_client'
 
 class String
   def titlecase
@@ -22,22 +24,53 @@ EXCLUDED_HEADERS = [
 configure :development do
   uri = URI.parse('redis://localhost:6379')
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
-  disable :protection
 end
 
 configure :production do
   uri = URI.parse(ENV["REDISTOGO_URL"])
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
-  disable :protection
 end
 
 configure do
   enable :sessions
+  disable :protection
+  RESERVED_CODES = %w{runscope/export runscope/oauth}
+  RUNSCOPE_ID = ENV["RESPONDTOIT_RUNSCOPE_ID"]
+  RUNSCOPE_SECRET = ENV["RESPONDTOIT_RUNSCOPE_SECRET"]
 end
 
 helpers do
+  def supports_runscope?
+    RUNSCOPE_ID && RUNSCOPE_SECRET
+  end
+
+  def runscope_authenticated?
+    !session[:runscope_access_token].nil?
+  end
+
+  def requires_runscope
+    halt(404, "Runscope not supported") if !supports_runscope?
+  end
+
+  def requires_authenticated_runscope
+    requires_runscope
+    halt(404, "Not authenticated with Runscope") if !runscope_authenticated?
+  end
+
+  def runscope_buckets
+    session[:runscope_buckets] || []
+  end
+
+  def block_route_if_restricted
+    halt(404, "Sorry, this is reserved") if RESERVED_CODES.include? code
+  end
+
+  def nonce
+    session[:nonce] ||= SecureRandom.uuid
+  end
+
   def code
-    params[:splat][0]
+    params[:code] || params[:splat][0]
   end
 
   def config_key
@@ -121,6 +154,7 @@ helpers do
 
   def package_request
     {
+      :id => SecureRandom.uuid,
       :time => Time.now.utc.to_f,
       :ip => request.ip,
       :method => request.request_method.upcase,
@@ -160,8 +194,62 @@ get '/' do
   slim :index
 end
 
+# Ensure that all of the following routes are included in RESERVED_CODES
+
+get '/runscope/oauth' do
+  requires_runscope
+  halt(400) if !params[:code]
+  
+  response = RestClient.post("https://www.runscope.com/signin/oauth/access_token",
+                  {
+                    client_id: RUNSCOPE_ID,
+                    client_secret: RUNSCOPE_SECRET,
+                    code: params[:code],
+                    grant_type: 'authorization_code',
+                    redirect_uri: url('/runscope/oauth')
+                  })
+
+  if response.code == 200
+    result = JSON.parse(response)
+    session[:runscope_access_token] = result["access_token"]
+
+    # Populate buckets list
+    response = RestClient.get "https://api.runscope.com/buckets", "Authorization" => "Bearer #{session[:runscope_access_token]}"
+    if response.code == 200
+      result = JSON.parse(response)
+      session[:runscope_buckets] = result["data"].map { |e| { default: e["default"], key: e["key"], name: e["name"] } }
+    end
+  end
+
+  redirect to("/")
+end
+
+post '/runscope/export' do
+  requires_authenticated_runscope
+  halt(404, "Unknown request") if !code
+  bucket_key = params[:bucket_key] || runscope_buckets.find { |b| b["default"] }["key"]
+  requests.select { |r| !params[:id] || (params[:id] && r['id'] == params[:id]) }.each do |req|
+    # TODO: Attempt to store this request in runscope using the session[:runscope_access_token]
+    data = {
+        request: {
+          method: "GET",
+          url: "http://www.example.com",
+          headers: {
+            "Content-Type" => "application/json"
+          },
+          body: "this is the body of the request"
+        }
+      }.to_json
+    response = RestClient.post "https://api.runscope.com/buckets/#{bucket_key}/messages", { data: data }, { content_type: :json }
+    puts "Exported request, result code is #{response.code}"
+  end
+
+  halt 404, "Unknown request"
+end
+
 ['/*.:format?', '/*'].each do |path|
   get path do
+    block_route_if_restricted
     return slim(:view) if view?
     return [404, "Um, guess again?"] if unknown?
 
@@ -178,6 +266,8 @@ end
   end
 
   post path do
+    block_route_if_restricted
+
     if view?
       msg = "The response was #{known? ? 'updated' : 'created'} successfully."
       if !params[:json].to_s.empty? or !params[:xml].to_s.empty?
@@ -213,6 +303,7 @@ end
   end
 
   put path do
+    block_route_if_restricted
     return 404 if unknown?
 
     store_request

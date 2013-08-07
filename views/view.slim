@@ -59,6 +59,16 @@ html
 
   body
     .container
+      - if supports_runscope?
+        .pull-right
+          - if !runscope_authenticated?
+            a href="https://www.runscope.com/signin/oauth/authorize?response_type=code&client_id=#{RUNSCOPE_ID}&redirect_uri=#{url("/")}runscope/oauth&scope=api:read%20message:write%20bucket:auth_token&state=#{nonce}" alt="Log in to Runscope"
+              img src=url("/runscope-eye.png")
+          - else
+            i.icon-ok
+            | &nbsp;
+            a href="https://www.runscope.com/"
+              img src=url("/runscope-eye-tiny.png")
       .page-header
         h2
           a href=url("/") = url("/").chomp("/")
@@ -113,6 +123,10 @@ html
                     | #{req['time'].strftime('%m/%d/%Y %H:%M:%S.%L UTC')}
                     br
                     | #{req['ip']}
+                    br
+                    - if runscope_authenticated?
+                      a href=url("/runscope/export?code=#{code}&id=#{req['id']}")
+                        img src=url("/runscope-eye-tiny.png")
                 .span10.request
                   h3 #{req['method']}&nbsp;#{req['path']}
                   h4
