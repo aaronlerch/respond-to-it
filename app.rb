@@ -34,7 +34,7 @@ end
 configure do
   enable :sessions
   disable :protection
-  RESERVED_CODES = %w{runscope/export runscope/oauth}
+  RESERVED_CODES = %w{/runscope/export /runscope/oauth /runscope/logout}
   RUNSCOPE_ID = ENV["RESPONDTOIT_RUNSCOPE_ID"]
   RUNSCOPE_SECRET = ENV["RESPONDTOIT_RUNSCOPE_SECRET"]
 end
@@ -58,15 +58,32 @@ helpers do
   end
 
   def runscope_buckets
-    session[:runscope_buckets] || []
+    session[:runscope_buckets] ||= fill_runscope_buckets
+  end
+
+  def fill_runscope_buckets
+    return nil if !session[:runscope_access_token]
+    return session[:runscope_buckets] if session[:runscope_buckets]
+    response = RestClient.get "https://api.runscope.com/buckets", authorization: "Bearer #{session[:runscope_access_token]}"
+    if response.code == 200
+      result = JSON.parse(response)
+      session[:runscope_buckets] = result["data"].map { |e| { "default" => e["default"], "key" => e["key"], "name" => e["name"] } }
+    end
+
+    session[:runscope_buckets]
+  end
+
+  def default_runscope_bucket_key
+    default_bucket = runscope_buckets.find { |b| b["default"] }
+    default_bucket["key"] if default_bucket
+  end
+
+  def runscope_state
+    session[:runscope_state] ||= SecureRandom.uuid
   end
 
   def block_route_if_restricted
-    halt(404, "Sorry, this is reserved") if RESERVED_CODES.include? code
-  end
-
-  def nonce
-    session[:nonce] ||= SecureRandom.uuid
+    halt(404, "Sorry, this is reserved") if RESERVED_CODES.include? request.path_info
   end
 
   def code
@@ -199,6 +216,7 @@ end
 get '/runscope/oauth' do
   requires_runscope
   halt(400) if !params[:code]
+  halt(400) if params[:state] != runscope_state
   
   response = RestClient.post("https://www.runscope.com/signin/oauth/access_token",
                   {
@@ -212,45 +230,49 @@ get '/runscope/oauth' do
   if response.code == 200
     result = JSON.parse(response)
     session[:runscope_access_token] = result["access_token"]
-
-    # Populate buckets list
-    response = RestClient.get "https://api.runscope.com/buckets", "Authorization" => "Bearer #{session[:runscope_access_token]}"
-    if response.code == 200
-      result = JSON.parse(response)
-      session[:runscope_buckets] = result["data"].map { |e| { default: e["default"], key: e["key"], name: e["name"] } }
-    end
   end
 
-  redirect to("/")
+  redirect to(session[:last_view] || "/")
+end
+
+get '/runscope/logout' do
+  session[:runscope_access_token] = session[:runscope_buckets] = nil
+  redirect to(session[:last_view] || "/")
 end
 
 post '/runscope/export' do
   requires_authenticated_runscope
   halt(404, "Unknown request") if !code
-  bucket_key = params[:bucket_key] || runscope_buckets.find { |b| b["default"] }["key"]
-  requests.select { |r| !params[:id] || (params[:id] && r['id'] == params[:id]) }.each do |req|
-    # TODO: Attempt to store this request in runscope using the session[:runscope_access_token]
-    data = {
-        request: {
-          method: "GET",
-          url: "http://www.example.com",
-          headers: {
-            "Content-Type" => "application/json"
-          },
-          body: "this is the body of the request"
-        }
-      }.to_json
-    response = RestClient.post "https://api.runscope.com/buckets/#{bucket_key}/messages", { data: data }, { content_type: :json }
-    puts "Exported request, result code is #{response.code}"
+  bucket_key = params[:bucket_key] || default_runscope_bucket_key
+  halt(404, "Unable to determine destination bucket") if !bucket_key
+  req = requests.find { |r| params[:id] && r['id'] == params[:id] }
+  halt(404, "Unable to find the specified request") if req.nil?
+  data = {
+      request: {
+        method: "GET",
+        url: "http://www.example.com",
+        headers: {
+          "Content-Type" => "application/json"
+        },
+        body: "this is the body of the request"
+      }
+    }.to_json
+  resp = RestClient.post "https://api.runscope.com/buckets/#{bucket_key}/messages", data, { content_type: :json, authorization: "Bearer #{session[:runscope_access_token]}" }
+  puts "Exported request, result code is #{resp.code}, value is #{resp}"
+  if resp.code == 200
+    # Success! Build the link
+    "https://www.runscope.com/stream/#{bucket_key}"
   end
-
-  halt 404, "Unknown request"
 end
 
 ['/*.:format?', '/*'].each do |path|
   get path do
     block_route_if_restricted
-    return slim(:view) if view?
+    if view?
+      session[:last_view] = request.fullpath
+      return slim(:view)
+    end
+
     return [404, "Um, guess again?"] if unknown?
 
     store_request

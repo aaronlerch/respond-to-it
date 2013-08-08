@@ -55,6 +55,35 @@ html
         $(function() {
           createEditors();
         });
+
+    - if runscope_authenticated?
+      javascript:
+        $(function() {
+          $(document).on('click', function (e) {
+            $('.popover-link').each(function () {
+              // the 'is' for buttons that trigger popups
+              // the 'has' for icons within a button that triggers a popup
+              if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                $(this).popover('hide');
+              }
+            });
+          });
+
+          $('#requests').on('click', '.runscope-export', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            $.post($this.attr('href'))
+              .done(function(data) {
+                $this.popover({title: 'Export Successful', content: 'The request was exported to Runscope. <a href="' + data + '" target="_blank">View it here.</a>'});
+                $this.popover('show');
+              })
+              .fail(function(jqXHR, status, error) {
+                $this.popover({title: 'Export Failed', content: 'The request could not be exported to Runscope at this time.'});
+                $this.popover('show');
+              });
+          })
+        })
+
     == slim :tracking
 
   body
@@ -62,7 +91,7 @@ html
       - if supports_runscope?
         .pull-right
           - if !runscope_authenticated?
-            a href="https://www.runscope.com/signin/oauth/authorize?response_type=code&client_id=#{RUNSCOPE_ID}&redirect_uri=#{url("/")}runscope/oauth&scope=api:read%20message:write%20bucket:auth_token&state=#{nonce}" alt="Log in to Runscope"
+            a href="https://www.runscope.com/signin/oauth/authorize?response_type=code&client_id=#{RUNSCOPE_ID}&redirect_uri=#{url("/runscope/oauth")}&scope=api:read%20message:write%20bucket:auth_token&state=#{runscope_state}" alt="Log in to Runscope"
               img src=url("/runscope-eye.png")
           - else
             i.icon-ok
@@ -125,7 +154,7 @@ html
                     | #{req['ip']}
                     br
                     - if runscope_authenticated?
-                      a href=url("/runscope/export?code=#{code}&id=#{req['id']}")
+                      a.runscope-export href=url("/runscope/export?code=#{code}&id=#{req['id']}") data-toggle="popover" data-placement="bottom" data-trigger="manual" data-html="true"
                         img src=url("/runscope-eye-tiny.png")
                 .span10.request
                   h3 #{req['method']}&nbsp;#{req['path']}
