@@ -63,7 +63,6 @@ helpers do
 
   def fill_runscope_buckets
     return nil if !session[:runscope_access_token]
-    return session[:runscope_buckets] if session[:runscope_buckets]
     response = RestClient.get "https://api.runscope.com/buckets", authorization: "Bearer #{session[:runscope_access_token]}"
     if response.code == 200
       result = JSON.parse(response)
@@ -242,24 +241,35 @@ end
 
 post '/runscope/export' do
   requires_authenticated_runscope
+  
   halt(404, "Unknown request") if !code
   bucket_key = params[:bucket_key] || default_runscope_bucket_key
   halt(404, "Unable to determine destination bucket") if !bucket_key
   req = requests.find { |r| params[:id] && r['id'] == params[:id] }
   halt(404, "Unable to find the specified request") if req.nil?
+
   data = {
       request: {
-        method: "GET",
-        url: "http://www.example.com",
-        headers: {
-          "Content-Type" => "application/json"
-        },
-        body: "this is the body of the request"
+        method: req['method'],
+        url: url(req['path']),
+        headers: req['headers'] || {},
+        form: req['params'] || {},
+        body: req['body'] || '',
+        timestamp: req['time'].to_f
       }
     }.to_json
-  resp = RestClient.post "https://api.runscope.com/buckets/#{bucket_key}/messages", data, { content_type: :json, authorization: "Bearer #{session[:runscope_access_token]}" }
-  puts "Exported request, result code is #{resp.code}, value is #{resp}"
+
+  resp = RestClient.post "https://api.runscope.com/buckets/#{bucket_key}/messages", 
+                         data, 
+                         { content_type: :json, authorization: "Bearer #{session[:runscope_access_token]}" }
+
   if resp.code == 200
+    respData = JSON.parse(resp)
+    if respData['meta']['error_count'].to_i > 0
+      puts "Error exporting a request to runscope: #{resp}"
+      halt(500, "Error exporting the request to Runscope")
+    end
+    
     # Success! Build the link
     "https://www.runscope.com/stream/#{bucket_key}"
   end
