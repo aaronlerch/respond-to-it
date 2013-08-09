@@ -62,12 +62,20 @@ html
           $('#requests').on('click', '.runscope-export', function(e) {
             e.preventDefault();
             var $this = $(this);
+            
+            // Ensure only one request at a time.
+            var processing = $this.attr('data-processing');
+            if (processing == 'true') {
+              return;
+            }
+
             var linked = $this.attr('data-export-href');
             if (linked) {
               handleSuccess($this, linked);
               return;
             }
 
+            $this.attr('data-processing', 'true');
             $.post($this.attr('href'))
               .done(function(data) {
                 $this.attr('data-export-href', data);
@@ -79,6 +87,9 @@ html
                   content: 'The request could not be exported to Runscope at this time.' });
                 $this.popover('show');
                 setTimeout(function() { $this.popover('hide'); }, 5000);
+              })
+              .always(function() {
+                $this.removeAttr('data-processing');
               });
           });
         });
