@@ -62,17 +62,34 @@ html
           $('#requests').on('click', '.runscope-export', function(e) {
             e.preventDefault();
             var $this = $(this);
+            var linked = $this.attr('data-export-href');
+            if (linked) {
+              handleSuccess($this, linked);
+              return;
+            }
+
             $.post($this.attr('href'))
               .done(function(data) {
-                $this.popover({title: 'Export Successful', content: 'The request was exported to Runscope. <a href="' + data + '" target="_blank">View it here.</a>'});
-                $this.popover('show');
+                $this.attr('data-export-href', data);
+                handleSuccess($this, data);
               })
               .fail(function(jqXHR, status, error) {
-                $this.popover({title: 'Export Failed', content: 'The request could not be exported to Runscope at this time.'});
+                $this.popover({
+                  title: 'Export Failed', 
+                  content: 'The request could not be exported to Runscope at this time.' });
                 $this.popover('show');
+                setTimeout(function() { $this.popover('hide'); }, 5000);
               });
-          })
-        })
+          });
+        });
+
+        function handleSuccess($this, link) {
+          $this.popover({
+                  title: 'Export Successful', 
+                  content: 'The request was exported to Runscope. <a href="' + link + '" target="_blank">View it here.</a>' });
+          $this.popover('show');
+          setTimeout(function() { $this.popover('hide'); }, 5000);
+        }
 
     == slim :tracking
 
@@ -81,13 +98,13 @@ html
       - if supports_runscope?
         .pull-right
           - if !runscope_authenticated?
-            a href="https://www.runscope.com/signin/oauth/authorize?response_type=code&client_id=#{RUNSCOPE_ID}&redirect_uri=#{url("/runscope/oauth")}&scope=api:read%20message:write%20bucket:auth_token&state=#{runscope_state}" alt="Log in to Runscope"
-              img src=url("/runscope-eye.png")
+            a href="https://www.runscope.com/signin/oauth/authorize?response_type=code&client_id=#{RUNSCOPE_ID}&redirect_uri=#{url("/runscope/oauth")}&scope=api:read%20message:write%20bucket:auth_token&state=#{runscope_state}"
+              img title="Log in to Runscope" src=url("/runscope-eye.png")
           - else
             i.icon-ok
             | &nbsp;
             a href="https://www.runscope.com/"
-              img src=url("/runscope-eye-tiny.png")
+              img title="Authenticated with Runscope" src=url("/runscope-eye-tiny.png")
       .page-header
         h2
           a href=url("/") = url("/").chomp("/")
@@ -144,8 +161,8 @@ html
                     | #{req['ip']}
                     br
                     - if runscope_authenticated?
-                      a.runscope-export href=url("/runscope/export?code=#{code}&id=#{req['id']}") data-toggle="popover" data-placement="bottom" data-trigger="manual" data-html="true"
-                        img src=url("/runscope-eye-tiny.png")
+                      a.runscope-export rel="clickover" href=url("/runscope/export?code=#{code}&id=#{req['id']}") data-placement="bottom" data-trigger="manual" data-html="true"
+                        img title="Export to your default Runscope bucket" src=url("/runscope-eye-tiny.png")
                 .span10.request
                   h3 #{req['method']}&nbsp;#{req['path']}
                   h4
