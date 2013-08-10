@@ -97,6 +97,10 @@ helpers do
     "code:#{code}:requests"
   end
 
+  def analytics_key
+    "code:#{code}:hits"
+  end
+
   def view?
     request.query_string =~ /^view$/i
   end
@@ -204,6 +208,16 @@ helpers do
   def package_body
     request.body.read if ((request.request_method == 'POST' || request.request_method == 'PUT') && !request.form_data?)
   end
+
+  def update_analytics
+    REDIS.multi do
+      # Global stat
+      REDIS.hincrby "hits", request.request_method.downcase, 1
+
+      # Per-endpoint stat
+      REDIS.hincrby analytics_key, request.request_method.downcase, 1
+    end
+  end
 end
 
 get '/' do
@@ -286,6 +300,7 @@ end
     return [404, "Um, guess again?"] if unknown?
 
     store_request
+    update_analytics
     request.session_options[:skip] = true
 
     if json?
@@ -314,6 +329,7 @@ end
       REDIS.multi do
         REDIS.del config_key
         REDIS.del requests_key
+        REDIS.del analytics_key
       end
       flash[:warning] = "The endpoint was destroyed."
       redirect to("/#{code}?view")
@@ -323,6 +339,7 @@ end
     return 404 if unknown?
 
     store_request
+    update_analytics
     request.session_options[:skip] = true
 
     if json?
@@ -339,6 +356,7 @@ end
     return 404 if unknown?
 
     store_request
+    update_analytics
     request.session_options[:skip] = true
 
     if json?
