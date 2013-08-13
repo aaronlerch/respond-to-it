@@ -109,7 +109,7 @@ html
       - if supports_runscope?
         .pull-right
           - if !runscope_authenticated?
-            a href="https://www.runscope.com/signin/oauth/authorize?response_type=code&client_id=#{RUNSCOPE_ID}&redirect_uri=#{url("/runscope/oauth")}&scope=api:read%20message:write%20bucket:auth_token&state=#{runscope_state}"
+            a href="https://www.runscope.com/signin/oauth/authorize?response_type=code&client_id=#{runscope_id}&redirect_uri=#{url("/runscope/oauth")}&scope=api:read%20message:write%20bucket:auth_token&state=#{runscope_state}"
               img title="Log in to Runscope" src=url("/runscope-eye.png")
           - else
             i.icon-ok
