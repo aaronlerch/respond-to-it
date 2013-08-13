@@ -210,12 +210,13 @@ helpers do
   end
 
   def update_analytics
+    request_method_field = request.request_method.downcase
+    daily_hit_field = "#{Date.today.to_s}:#{request.request_method.downcase}"
     REDIS.multi do
-      # Global stat
-      REDIS.hincrby "hits", request.request_method.downcase, 1
-
-      # Per-endpoint stat
-      REDIS.hincrby analytics_key, request.request_method.downcase, 1
+      REDIS.hincrby "hits", request_method_field, 1  # Global
+      REDIS.hincrby "hits", daily_hit_field, 1  # Global, daily
+      REDIS.hincrby analytics_key, request_method_field, 1  # Per-endpoint
+      REDIS.hincrby analytics_key, daily_hit_field, 1  # Per-endpoint, daily
     end
   end
 end
