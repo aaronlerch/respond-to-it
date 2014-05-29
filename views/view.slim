@@ -215,12 +215,12 @@ html
                 a#destroy-prompt.btn.btn-large.btn-danger.pull-right role="button" data-toggle="modal" href='#prompt-for-destroy' Destroy
                 span#destroy-note.pull-right be tidy! clean up after yourself
 
-        #prompt-for-destroy.modal.hide.fade aria-labelledby="destroy-modal-label" aria-hidden="true"
-          .modal-header
-            button.close type="button" data-dismiss="modal" aria-hidden="true" x
-            h3#destroy-modal-label Destroy Endpoint?
-          .modal-body
-            p Destroying the endpoint will purge the response JSON and XML, as well as all stored requests.
-          .modal-footer
-            a#destroy.btn.btn-danger href='#' Destroy
-            a#cancel-destroy.btn href='#' Cancel
+      #prompt-for-destroy.modal.hide.fade aria-labelledby="destroy-modal-label" aria-hidden="true"
+        .modal-header
+          button.close type="button" data-dismiss="modal" aria-hidden="true" x
+          h3#destroy-modal-label Destroy Endpoint?
+        .modal-body
+          p Destroying the endpoint will purge the response JSON and XML, as well as all stored requests.
+        .modal-footer
+          a#destroy.btn.btn-danger href='#' Destroy
+          a#cancel-destroy.btn href='#' Cancel
