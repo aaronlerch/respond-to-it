@@ -1,0 +1,11 @@
+{
+	"name": "respond-to-it",
+	"description": "Debug and respond to web hooks like a pro",
+	"logo": "http://respondto.it/favicon.ico",
+	"repository": "https://github.com/aaronlerch/respond-to-it",
+	"keywords": ["webhook", "test"],
+	"success_url": "/",
+	"addons": [
+		"redistogo:nano"
+	]
+}

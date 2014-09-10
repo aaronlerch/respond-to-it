@@ -22,6 +22,10 @@ If the limitations of http://respondto.it/ don't match your needs, you can easil
 
 Then tweak to your heart's content.
 
+Or just push the button: 
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 ## Thanks
 
 Thanks to [Andrew Dunkman](http://twitter.com/adunkman) for some UX help at
