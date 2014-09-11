@@ -30,3 +30,5 @@ Or just push the button:
 
 Thanks to [Andrew Dunkman](http://twitter.com/adunkman) for some UX help at
 [Codemash](http://codemash.org/)
+
+Thanks to [Benjamin Wohlwend](https://github.com/piquadrat) for hooking up the Heroku automatic deploy button!
