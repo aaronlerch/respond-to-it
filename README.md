@@ -22,13 +22,9 @@ If the limitations of http://respondto.it/ don't match your needs, you can easil
 
 Then tweak to your heart's content.
 
-Or just push the button: 
+Or just push the button:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-## Thanks
-
-Thanks to [Andrew Dunkman](http://twitter.com/adunkman) for some UX help at
-[Codemash](http://codemash.org/)
-
-Thanks to [Benjamin Wohlwend](https://github.com/piquadrat) for hooking up the Heroku automatic deploy button!
+Written by [Aaron Lerch](https://github.com/aaronlerch). For additional
+contributors, who are awesome, see [CONTRIBUTORS](CONTRIBUTORS.md).
