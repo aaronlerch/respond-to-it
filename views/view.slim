@@ -162,7 +162,8 @@ html
           #requests.tab-pane[class=active_if_known]
             .alert
               strong
-                | Requests are only stored for 2 days and then deleted.
+                | Requests are only stored for 2 days and then deleted. 
+              a.clear href='?clear' Clear now
             - requests.each do |req|
               .row
                 .span2

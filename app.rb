@@ -109,6 +109,10 @@ helpers do
     request.query_string =~ /^destroy$/i
   end
 
+  def clear?
+    request.query_string =~ /^clear$/i
+  end
+
   def json?
     request.accept.first == "application/json" || params[:format] =~ /json/i
   end
@@ -170,6 +174,10 @@ helpers do
       REDIS.ltrim requests_key, 0, 9 # restrict to 10 items (but trim the first part of the list, keeping the last 10)
       REDIS.expire requests_key, 172800 # delete all requests after 2 days: 2 * 24 * 60 * 60
     end
+  end
+
+  def clear_requests
+    REDIS.DEL requests_key
   end
 
   def package_request
@@ -293,6 +301,12 @@ end
 ['/*.:format?', '/*'].each do |path|
   get path do
     block_route_if_restricted
+
+    if clear?
+      clear_requests
+      return redirect to("/#{code}?view")
+    end
+
     if view?
       session[:last_view] = request.fullpath
       return slim(:view)
