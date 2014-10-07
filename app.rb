@@ -109,6 +109,10 @@ helpers do
     request.query_string =~ /^destroy$/i
   end
 
+  def clear?
+    request.query_string =~ /^clear$/i
+  end
+
   def json?
     request.accept.first == "application/json" || params[:format] =~ /json/i
   end
@@ -172,6 +176,10 @@ helpers do
     end
   end
 
+  def clear_requests
+    REDIS.DEL requests_key
+  end
+
   def package_request
     {
       :id => SecureRandom.uuid,
@@ -231,7 +239,7 @@ get '/runscope/oauth' do
   requires_runscope
   halt(400) if !params[:code]
   halt(400) if params[:state] != runscope_state
-  
+
   response = RestClient.post("https://www.runscope.com/signin/oauth/access_token",
                   {
                     client_id: RUNSCOPE_ID,
@@ -256,7 +264,7 @@ end
 
 post '/runscope/export' do
   requires_authenticated_runscope
-  
+
   halt(404, "Unknown request") if !code
   bucket_key = params[:bucket_key] || default_runscope_bucket_key
   halt(404, "Unable to determine destination bucket") if !bucket_key
@@ -274,8 +282,8 @@ post '/runscope/export' do
       }
     }.to_json
 
-  resp = RestClient.post "https://api.runscope.com/buckets/#{bucket_key}/messages", 
-                         data, 
+  resp = RestClient.post "https://api.runscope.com/buckets/#{bucket_key}/messages",
+                         data,
                          { content_type: :json, authorization: "Bearer #{session[:runscope_access_token]}" }
 
   if resp.code == 200
@@ -284,7 +292,7 @@ post '/runscope/export' do
       puts "Error exporting a request to runscope: #{resp}"
       halt(500, "Error exporting the request to Runscope")
     end
-    
+
     # Success! Build the link
     "https://www.runscope.com/stream/#{bucket_key}"
   end
@@ -293,6 +301,12 @@ end
 ['/*.:format?', '/*'].each do |path|
   get path do
     block_route_if_restricted
+
+    if clear?
+      clear_requests
+      return redirect to("/#{code}?view")
+    end
+
     if view?
       session[:last_view] = request.fullpath
       return slim(:view)
