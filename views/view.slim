@@ -62,7 +62,7 @@ html
           $('#requests').on('click', '.runscope-export', function(e) {
             e.preventDefault();
             var $this = $(this);
-            
+
             // Ensure only one request at a time.
             var processing = $this.attr('data-processing');
             if (processing == 'true') {
@@ -83,7 +83,7 @@ html
               })
               .fail(function(jqXHR, status, error) {
                 $this.popover({
-                  title: 'Export Failed', 
+                  title: 'Export Failed',
                   content: 'The request could not be exported to Runscope at this time.' });
                 $this.popover('show');
                 setTimeout(function() { $this.popover('hide'); }, 5000);
@@ -96,7 +96,7 @@ html
 
         function handleSuccess($this, link) {
           $this.popover({
-                  title: 'Export Successful', 
+                  title: 'Export Successful',
                   content: 'The request was exported to Runscope. <a href="' + link + '" target="_blank">View it here.</a>' });
           $this.popover('show');
           setTimeout(function() { $this.popover('hide'); }, 5000);
@@ -150,7 +150,7 @@ html
               a.close data-dismiss="alert" href='#' x
               p
                 strong You must first create this endpoint
-                | , even if you're not going to provide a response. Otherwise we will respond with a 
+                | , even if you're not going to provide a response. Otherwise we will respond with a
                 strong 404
                 | , like, forever.
               p
