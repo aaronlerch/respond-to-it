@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'slim'
+require 'slim/include'
 require 'redis'
 require 'json'
 require 'sinatra/flash'
@@ -22,7 +23,8 @@ EXCLUDED_HEADERS = [
 ]
 
 configure :development do
-  uri = URI.parse('redis://localhost:6379')
+  redis_url = (ENV["BOXEN_REDIS_URL"] || "redis://localhost:6379").chomp('/')
+  uri = URI.parse(redis_url)
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
 end
 

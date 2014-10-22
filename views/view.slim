@@ -102,7 +102,15 @@ html
           setTimeout(function() { $this.popover('hide'); }, 5000);
         }
 
-    == slim :tracking
+    javascript:
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-361923-6']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
 
   body
     .container
@@ -151,7 +159,7 @@ html
               p
                 strong You must first create this endpoint
                 | , even if you're not going to provide a response. Otherwise we will respond with a
-                strong 404
+                strong< 404
                 | , like, forever.
               p
                 a#create.btn.btn-small href='#' Create it Empty
@@ -203,7 +211,8 @@ html
           form#response-form method="POST" action=url("/#{code}?view")
             .row
               .span6
-                h2 { JSON }
+                h2
+                  | { JSON }
                 textarea.span8#json name="json" rows="15"
                   = config["json"] if known?
               .span6
