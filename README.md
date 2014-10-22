@@ -2,6 +2,8 @@
 
 http://respondto.it/ is a web hook debugging and stubbing tool. It logs web hook requests, but unlike other tools it also allows the configuration of a default response for JSON and XML requests.
 
+[![Travis-CI](https://travis-ci.org/aaronlerch/respond-to-it.svg?branch=master)](https://travis-ci.org/aaronlerch/respond-to-it)
+
 ## Web Hooks
 
 Web hooks have traditionally been (and continue to be) one-way notifications over HTTP. Tools like http://respondto.it/ or http://requestb.in/ exist to make it easier to analyze web hook behavior when implementing a service to process the hook's request. (Think "glorified puts statement.")
