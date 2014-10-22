@@ -7,6 +7,7 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
+    rake (10.3.2)
     redis (3.1.0)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
@@ -29,6 +30,7 @@ PLATFORMS
 DEPENDENCIES
   json
   rack
+  rake
   redis
   rest-client
   sinatra

@@ -1,0 +1,3 @@
+task :default do
+  puts "I am a horrible person for not having tests yet."
+end
