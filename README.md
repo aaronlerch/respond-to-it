@@ -6,7 +6,7 @@ http://respondto.it/ is a web hook debugging and stubbing tool. It logs web hook
 
 ## Web Hooks
 
-Web hooks have traditionally been (and continue to be) one-way notifications over HTTP. Tools like http://respondto.it/ or http://requestb.in/ exist to make it easier to analyze web hook behavior when implementing a service to process the hook's request. (Think "glorified puts statement.")
+Web hooks have traditionally been (and continue to be) one-way notifications over HTTP. Tools like http://respondto.it/ or http://requestb.in/ exist to make it easier to analyze web hook behavior when implementing a service to process the hook's request. (Think "glorified `puts` statement.")
 
 ## Web Hooks as Workflow
 
