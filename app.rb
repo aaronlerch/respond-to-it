@@ -116,7 +116,7 @@ helpers do
   end
 
   def json?
-    request.accept.first == "application/json" || params[:format] =~ /json/i
+    request.accept.first.to_s == "application/json" || params[:format] =~ /json/i
   end
 
   def json
@@ -125,7 +125,7 @@ helpers do
   end
 
   def xml?
-    request.accept.first == "application/xml" || params[:format] =~ /xml/i
+    request.accept.first.to_s == "application/xml" || params[:format] =~ /xml/i
   end
 
   def xml
