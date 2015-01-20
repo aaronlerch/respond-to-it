@@ -1,12 +1,12 @@
-# respondto.it
+# HTTP Responder
 
-http://respondto.it/ is a web hook debugging and stubbing tool. It logs web hook requests, but unlike other tools it also allows the configuration of a default response for JSON and XML requests.
+http://httpresponder.com/ is a web hook debugging and stubbing tool. It logs web hook requests, but unlike other tools it also allows the configuration of a default response for JSON and XML requests.
 
 [![Travis-CI](https://travis-ci.org/aaronlerch/respond-to-it.svg?branch=master)](https://travis-ci.org/aaronlerch/respond-to-it)
 
 ## Web Hooks
 
-Web hooks have traditionally been (and continue to be) one-way notifications over HTTP. Tools like http://respondto.it/ or http://requestb.in/ exist to make it easier to analyze web hook behavior when implementing a service to process the hook's request. (Think "glorified `puts` statement.")
+Web hooks have traditionally been (and continue to be) one-way notifications over HTTP. Tools like http://httpresponder.com/ or http://requestb.in/ exist to make it easier to analyze web hook behavior when implementing a service to process the hook's request. (Think "glorified `puts` statement.")
 
 ## Web Hooks as Workflow
 
@@ -14,7 +14,7 @@ Increasingly, web hooks are not only used for push notifications, but can also b
 
 # Deploy your own
 
-If the limitations of http://respondto.it/ don't match your needs, you can easily deploy your own version on heroku:
+If the limitations of http://httpresponder.com/ don't match your needs, you can easily deploy your own version on heroku:
 
     git clone git://github.com/aaronlerch/respond-to-it.git
     cd respond-to-it
