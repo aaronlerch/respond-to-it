@@ -1,8 +1,7 @@
-# PROJECT DEPRECATED
-
-A note from Aaron: This project has been running for years on a free heroku app tier. The dependencies are out of date and security holes have been discovered in those dependencies over time. The entire project needs a refresh, which I won't be doing. If you are seeking to catch and analyze http traffic for webhooks, I recommend https://ngrok.com/ and running a simple local server.
-
-If anybody is still using http://httpresponder.com/ then I wish you the best and thank you for using this simple little tool!
+> **Warning**
+> A note from @aaronlerch: This project has been running for years on a free heroku app tier. The dependencies are out of date and security holes have been discovered in those dependencies over time. The entire project needs a refresh, which I won't be doing. If you are seeking to catch and analyze http traffic for webhooks, I recommend https://ngrok.com/ and running a simple local server.
+> 
+> If anybody is still using http://httpresponder.com/ then I wish you the best and thank you for using this simple little tool!
 
 # HTTP Responder
 
